@@ -1,0 +1,1 @@
+# locintel-shop-mobile.
