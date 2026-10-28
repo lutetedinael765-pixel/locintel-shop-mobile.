@@ -1,0 +1,19 @@
+name: LOCINTEL Shop - iOS Simulator
+on:
+  workflow_dispatch:
+jobs:
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.35.7'
+          cache: true
+      - run: flutter create --project-name locintel_shop --platforms=android,ios .
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - name: Build iOS (unsigned simulator binary)
+        run: flutter build ios --simulator --debug --no-codesign --dart-define=SHOP_API_BASE=${{ vars.SHOP_API_BASE }}
