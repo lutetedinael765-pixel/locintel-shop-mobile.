@@ -1,0 +1,27 @@
+name: LOCINTEL Shop - Android Test APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, develop]
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.35.7'
+          cache: true
+      - name: Generate Flutter platform files
+        run: flutter create --project-name locintel_shop --platforms=android,ios .
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - name: Build test APK
+        run: flutter build apk --debug --dart-define=SHOP_API_BASE=${{ vars.SHOP_API_BASE }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LOCINTEL-Shop-Android-debug
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
